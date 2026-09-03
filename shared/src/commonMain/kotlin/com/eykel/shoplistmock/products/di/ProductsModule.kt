@@ -1,6 +1,6 @@
 package com.eykel.shoplistmock.products.di
 
-import com.eykel.shoplistmock.core.network.NetworkSimulationConfig
+import com.eykel.shoplistmock.core.network.NetworkSimulationController
 import com.eykel.shoplistmock.products.data.network.ProductApiService
 import com.eykel.shoplistmock.products.data.network.productApiService
 import com.eykel.shoplistmock.products.data.repository.ProductRepositoryImpl
@@ -16,11 +16,11 @@ import org.koin.core.module.dsl.viewModelOf
 import org.koin.dsl.module
 
 /**
- * The only place [NetworkSimulationConfig] is instantiated — tune latency/error rate here to
- * demo the UI's loading/error states without touching any other layer.
+ * The only place [NetworkSimulationController] is instantiated — the list screen's "simulate
+ * failure" toggle reads/writes this same instance to demo the UI's error states live.
  */
 val productsModule: Module = module {
-    single { NetworkSimulationConfig() }
+    single { NetworkSimulationController() }
     single<ProductApiService> { productApiService(get()) }
     single<ProductRepository> { ProductRepositoryImpl(get()) }
     factoryOf(::GetProductsUseCase)
