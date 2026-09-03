@@ -1,6 +1,6 @@
 package com.eykel.shoplistmock.products.data.network
 
-import com.eykel.shoplistmock.core.network.NetworkSimulationConfig
+import com.eykel.shoplistmock.core.network.NetworkSimulationController
 import io.ktor.client.engine.mock.MockEngine
 import io.ktor.client.engine.mock.MockRequestHandleScope
 import io.ktor.client.engine.mock.respond
@@ -16,11 +16,13 @@ import kotlin.random.Random
 /**
  * Stands in for a real backend: a genuine [MockEngine] plugged into the same Ktor pipeline a
  * production engine (OkHttp/Darwin) would use, answering `/v1/products` and
- * `/v1/products/{id}` from [ProductFixtures] instead of a socket. [config] simulates latency
- * and an error rate so the UI's loading/error states are exercised for real.
+ * `/v1/products/{id}` from [ProductFixtures] instead of a socket. [controller] is read on every
+ * request (not captured once), so latency/error rate can change live — see
+ * [NetworkSimulationController].
  */
-internal fun productMockEngine(json: Json, config: NetworkSimulationConfig): MockEngine =
+internal fun productMockEngine(json: Json, controller: NetworkSimulationController): MockEngine =
     MockEngine { request ->
+        val config = controller.config.value
         delay(Random.nextLong(config.latencyMillis.first, config.latencyMillis.last + 1))
 
         if (config.errorRate > 0f && Random.nextFloat() < config.errorRate) {
