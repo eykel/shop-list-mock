@@ -7,6 +7,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Wifi
+import androidx.compose.material.icons.filled.WifiOff
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -40,7 +46,30 @@ fun ProductListScreenRoot(viewModel: ProductListViewModel = koinViewModel()) {
     }
 
     Scaffold(
-        topBar = { TopAppBar(title = { Text("Shop List Mock") }) },
+        topBar = {
+            TopAppBar(
+                title = { Text("Shop List Mock") },
+                actions = {
+                    IconButton(
+                        onClick = { viewModel.onAction(ProductListAction.ToggleSimulatedFailure) }
+                    ) {
+                        Icon(
+                            imageVector = if (state.simulateFailures) Icons.Filled.WifiOff else Icons.Filled.Wifi,
+                            contentDescription = if (state.simulateFailures) {
+                                "Falha de rede simulada ativa, tocar para desativar"
+                            } else {
+                                "Simular falha de rede"
+                            },
+                            tint = if (state.simulateFailures) {
+                                MaterialTheme.colorScheme.error
+                            } else {
+                                MaterialTheme.colorScheme.onSurfaceVariant
+                            }
+                        )
+                    }
+                }
+            )
+        },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { padding ->
         ProductListScreen(
