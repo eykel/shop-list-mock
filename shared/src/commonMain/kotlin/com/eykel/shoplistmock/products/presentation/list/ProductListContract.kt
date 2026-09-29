@@ -10,7 +10,9 @@ data class ProductListState(
     val products: List<Product> = emptyList(),
     val errorMessage: String? = null,
     // Drives the detail bottom sheet: non-null means it is open for this product id.
-    val selectedProductId: String? = null
+    val selectedProductId: String? = null,
+    // Demo control: forces every mock request to fail so the error UI can be shown on demand.
+    val simulateFailures: Boolean = false
 ) : UiState
 
 sealed interface ProductListAction : UiAction {
@@ -18,6 +20,7 @@ sealed interface ProductListAction : UiAction {
     data object Retry : ProductListAction
     data class SelectProduct(val id: String) : ProductListAction
     data object DismissDetail : ProductListAction
+    data object ToggleSimulatedFailure : ProductListAction
 }
 
 sealed interface ProductListEffect : UiEffect {
