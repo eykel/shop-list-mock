@@ -25,6 +25,7 @@ import com.eykel.shoplistmock.designsystem.components.ErrorState
 import com.eykel.shoplistmock.designsystem.components.LoadingState
 import com.eykel.shoplistmock.designsystem.components.ProductCard
 import com.eykel.shoplistmock.products.domain.model.Product
+import com.eykel.shoplistmock.products.presentation.detail.ProductDetailBottomSheetRoot
 import org.koin.compose.viewmodel.koinViewModel
 
 @Composable
@@ -49,7 +50,12 @@ fun ProductListScreenRoot(viewModel: ProductListViewModel = koinViewModel()) {
         )
     }
 
-    // The detail bottom sheet mounts here once its own screen lands.
+    state.selectedProductId?.let { productId ->
+        ProductDetailBottomSheetRoot(
+            productId = productId,
+            onDismiss = { viewModel.onAction(ProductListAction.DismissDetail) }
+        )
+    }
 }
 
 @Composable
