@@ -11,13 +11,17 @@ class FakeProductRepository(
     var detailResult: ModelResult<ProductDetail> = ModelResult.error(IllegalStateException("not configured"))
 ) : ProductRepository {
 
-    /** When set, [getProducts] suspends until the test completes it — lets a test observe the loading state. */
+    /** When set, [getProducts]/[getProductDetail] suspend until the test completes them — lets a test observe the loading state. */
     var productsGate: CompletableDeferred<Unit>? = null
+    var detailGate: CompletableDeferred<Unit>? = null
 
     override suspend fun getProducts(): ModelResult<List<Product>> {
         productsGate?.await()
         return productsResult
     }
 
-    override suspend fun getProductDetail(id: String): ModelResult<ProductDetail> = detailResult
+    override suspend fun getProductDetail(id: String): ModelResult<ProductDetail> {
+        detailGate?.await()
+        return detailResult
+    }
 }
