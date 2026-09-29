@@ -2,6 +2,7 @@ package com.eykel.shoplistmock.products.presentation.list
 
 import app.cash.turbine.test
 import com.eykel.shoplistmock.core.network.NetworkError
+import com.eykel.shoplistmock.core.network.NetworkSimulationController
 import com.eykel.shoplistmock.core.result.ModelResult
 import com.eykel.shoplistmock.fake.FakeProductRepository
 import com.eykel.shoplistmock.products.domain.model.Product
@@ -87,6 +88,21 @@ class ProductListViewModelTest {
 
         assertEquals(listOf(sampleProduct), viewModel.state.value.products)
         assertNull(viewModel.state.value.errorMessage)
+    }
+
+    @Test
+    fun toggleSimulatedFailure_flipsStateAndDrivesController() = runTest {
+        repository.productsResult = ModelResult.success(listOf(sampleProduct))
+        val controller = NetworkSimulationController()
+        val viewModel = ProductListViewModel(GetProductsUseCase(repository), controller)
+
+        viewModel.onAction(ProductListAction.ToggleSimulatedFailure)
+        assertTrue(viewModel.state.value.simulateFailures)
+        assertEquals(1f, controller.config.value.errorRate)
+
+        viewModel.onAction(ProductListAction.ToggleSimulatedFailure)
+        assertTrue(!viewModel.state.value.simulateFailures)
+        assertEquals(0f, controller.config.value.errorRate)
     }
 
     @Test

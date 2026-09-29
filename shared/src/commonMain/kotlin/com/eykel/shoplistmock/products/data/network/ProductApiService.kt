@@ -1,7 +1,7 @@
 package com.eykel.shoplistmock.products.data.network
 
 import com.eykel.shoplistmock.core.network.NetworkError
-import com.eykel.shoplistmock.core.network.NetworkSimulationConfig
+import com.eykel.shoplistmock.core.network.NetworkSimulationController
 import io.ktor.client.HttpClient
 import io.ktor.client.call.body
 import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
@@ -41,9 +41,9 @@ internal class KtorProductApiService(private val client: HttpClient) : ProductAp
     }
 }
 
-fun productApiService(config: NetworkSimulationConfig = NetworkSimulationConfig()): ProductApiService {
+fun productApiService(controller: NetworkSimulationController = NetworkSimulationController()): ProductApiService {
     val json = Json { ignoreUnknownKeys = true }
-    val client = HttpClient(productMockEngine(json, config)) {
+    val client = HttpClient(productMockEngine(json, controller)) {
         install(ContentNegotiation) { json(json) }
     }
     return KtorProductApiService(client)
